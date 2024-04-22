@@ -9,11 +9,14 @@
 //
 // Has support for changing the font and color, as well as saving to the registry.
 //
-// Microsoft Visual Studio Community Edition 64 bit, version 17.9.5
+// Microsoft Visual Studio Community Edition 64 bit, version 17.9.6
 //
 // Alex Sokolek, Version 1.0.0.1, Copyright (c) March 26, 2024
 // 
-// Version 1.0.0.2, April 14, 2024, Version changed for release
+// Version 1.0.0.2, April 14, 2024, Version changed for release.
+// 
+// Version 1.0.0.3, April 21, 2024, Added mouse capture logic.
+// 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "framework.h"
@@ -410,6 +413,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SYSCHAR:
 	case WM_SYSDEADCHAR:
 	{
+		// Process mouse capture logic
+		if (message == WM_LBUTTONDOWN && !LButtonDown && !RButtonDown && !MButtonDown && !XButtonDown) SetCapture(hWnd);
+		if (message == WM_RBUTTONDOWN && !LButtonDown && !RButtonDown && !MButtonDown && !XButtonDown) SetCapture(hWnd);
+		if (message == WM_MBUTTONDOWN && !LButtonDown && !RButtonDown && !MButtonDown && !XButtonDown) SetCapture(hWnd);
+		if (message == WM_XBUTTONDOWN && !LButtonDown && !RButtonDown && !MButtonDown && !XButtonDown) SetCapture(hWnd);
+		if (message == WM_LBUTTONUP                   && !RButtonDown && !MButtonDown && !XButtonDown) ReleaseCapture();
+		if (message == WM_RBUTTONUP   && !LButtonDown                 && !MButtonDown && !XButtonDown) ReleaseCapture();
+		if (message == WM_MBUTTONUP   && !LButtonDown && !RButtonDown                 && !XButtonDown) ReleaseCapture();
+		if (message == WM_XBUTTONUP   && !LButtonDown && !RButtonDown && !MButtonDown                ) ReleaseCapture();
+
 		// Record the state of the mouse buttons
 		if (message == WM_LBUTTONDOWN) LButtonDown = true;
 		if (message == WM_RBUTTONDOWN) RButtonDown = true;
